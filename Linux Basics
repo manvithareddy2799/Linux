@@ -1,0 +1,42 @@
+Linux-Abshikek-https://github.com/iam-veeramalla/ultimate-linux-guide/blob/main/01-getting-started/02-linux-structure.md
+🔹 1. What is Linux?
+Linux is an open-source operating system that acts as a bridge between hardware and software.
+It manages system resources and allows users to interact with the computer through commands and applications.
+
+🔸 Main Functions:
+Manages hardware resources (CPU, memory, storage, etc.)
+Provides file system and process management
+Enables multi-user and multitasking
+
+🔹 2. Linux Distributions
+A distribution (distro) is a version of Linux that includes the kernel + tools + applications.
+Some popular examples:
+Distribution	Description
+Ubuntu	Beginner-friendly, used in desktops and servers
+Debian	Very stable, used as base for other distros
+Red Hat / CentOS / Fedora	Common in enterprises
+Kali Linux	Used for security testing
+Arch Linux	Lightweight and customizable
+
+🔹 3. Linux Login and Prompt Structure
+When you open a terminal, you see something like:
+user@host:~$
+Meaning:
+user → Logged-in username
+host → Machine name (hostname)
+~ → Represents the home directory of the user (/home/user)
+$ → Normal user prompt
+# → Root (administrator) prompt
+
+Example:
+test@server:~$      → You are in /home/test
+root@server:/#      → You are in root (administrator) mode
+
+🔹 4. Switching Users and Directories
+| Command       | Description            | Example     |
+| ------------- | ---------------------- | ----------- |
+| `sudo su -`   | Switch to root user    | `sudo su -` |
+| `su username` | Switch to another user | `su manvi`  |
+| `cd /`        | Go to root directory   |             |
+| `cd /home`    | Go to home directory   |             |
+| `pwd`         | Show current directory |             |
