@@ -1,0 +1,122 @@
+Logical Volume Manager(LVM):
+Why LVM
+LVM is used because it gives flexibility:
+Combine multiple disks
+Extend space easily
+Take snapshots for backup or recovery
+Manage storage dynamically
+
+🟢 Example:
+You start with 10GB, later attach another 10GB — with LVM you can merge them into one 20GB storage without losing data.
+1️⃣ You create a new partition on /dev/xvdf using fdisk.
+2️⃣ Then you run:
+sudo partprobe /dev/xvdf
+3️⃣ Now, when you check:
+lsblk
+You’ll see /dev/xvdf1 (the new partition) appear.
+So, partprobe = refresh partition table after changes.
+
+Creating Physical Volume (PV)
+Now make it a Physical Volume (PV):
+sudo pvcreate /dev/xvdf1
+Check:
+sudo pvdisplay
+
+Creating Volume Group (VG)
+Combine one or more PVs into a Volume Group:
+sudo vgcreate vg_data /dev/xvdf1
+Check:
+sudo vgdisplay
+🟢 Think of VG as a pool of storage you can cut into pieces later.
+
+
+Creating Logical Volume (LV)
+From the VG, create a Logical Volume (virtual partition):
+sudo lvcreate -L 5G -n lv_backup vg_data
+Check:
+sudo lvdisplay
+
+Creating File System
+You need to format the LV before use:
+sudo mkfs.ext4 /dev/vg_data/lv_backup
+
+Then mount it:
+sudo mkdir /mnt/backup
+sudo mount /dev/vg_data/lv_backup /mnt/backup
+Now use /mnt/backup like normal storage.
+
+Extending Logical Volume
+You want to increase its size (say +2GB):
+sudo lvextend -L +2G /dev/vg_data/lv_backup
+Now LV size is 7GB, but filesystem is still 5GB — so we must resize it.
+
+Resizing the Volume (Filesystem)
+To make Linux recognize the extra space:
+sudo resize2fs /dev/vg_data/lv_backup
+or if it’s XFS:
+sudo xfs_growfs /mnt/backup
+
+Now, when you check:
+df -h
+you’ll see the bigger size.
+
+Creating Snapshot(temporary storage)
+Snapshot is like a “photo” of your LV at a point in time.
+Create it:
+sudo lvcreate -L 1G -s -n lv_backup_snap /dev/vg_data/lv_backup
+
+Mount snapshot to check or recover files:
+sudo mkdir /mnt/snap
+sudo mount /dev/vg_data/lv_backup_snap /mnt/snap
+
+Recover Deleted Data (Merging Snapshot)
+If you accidentally delete files in LV, but you have a snapshot —
+you can roll back using:
+sudo umount /mnt/backup
+sudo umount /mnt/snap
+sudo lvconvert --merge /dev/vg_data/lv_backup_snap
+sudo mount /mnt/backup
+Your data returns to the state before deletion.
+
+Quick Command Flow (Cheat Sheet)
+# 1. Create partition
+fdisk /dev/xvdf
+partprobe /dev/xvdf
+
+# 2. Create Physical Volume
+pvcreate /dev/xvdf1
+
+# 3. Create Volume Group
+vgcreate vg_data /dev/xvdf1
+
+# 4. Create Logical Volume
+lvcreate -L 5G -n lv_backup vg_data
+
+# 5. Format and mount
+mkfs.ext4 /dev/vg_data/lv_backup
+mkdir /mnt/backup
+mount /dev/vg_data/lv_backup /mnt/backup
+
+# 6. Extend LV
+lvextend -L +2G /dev/vg_data/lv_backup
+resize2fs /dev/vg_data/lv_backup
+
+# 7. Snapshot
+lvcreate -L 1G -s -n lv_backup_snap /dev/vg_data/lv_backup
+
+# 8. Recover (merge snapshot)
+lvconvert --merge /dev/vg_data/lv_backup_snap
+
+
+| Step                   | Command             | What it does                 |
+| ---------------------- | ------------------- | ---------------------------- |
+| `fdisk`                | Create partition    | Divide disk                  |
+| `partprobe`            | Refresh kernel      | Make Linux see new partition |
+| `pvcreate`             | Make disk LVM-ready | Convert to Physical Volume   |
+| `vgcreate`             | Make a storage pool | Combine PVs into VG          |
+| `lvcreate`             | Make usable space   | Create Logical Volume        |
+| `mkfs`                 | Format volume       | Prepare to store files       |
+| `mount`                | Attach to folder    | Make it usable               |
+| `lvextend + resize2fs` | Increase size       | Extend storage               |
+| `lvcreate -s`          | Snapshot            | Backup point                 |
+| `lvconvert --merge`    | Merge snapshot      | Recover deleted data         |
