@@ -39,16 +39,143 @@ They’re divided into 3 categories:
 
 
 🔹 4. Common Port Numbers You Should Know
-| Service   | Protocol | Port     | Description                              |
-| --------- | -------- | -------- | ---------------------------------------- |
-| **SSH**   | TCP      | **22**   | Secure remote login to Linux servers     |
-| **FTP**   | TCP      | **21**   | File Transfer Protocol                   |
-| **HTTP**  | TCP      | **80**   | Normal web browsing (insecure)           |
-| **HTTPS** | TCP      | **443**  | Secure web browsing                      |
-| **SMTP**  | TCP      | **25**   | Sending emails                           |
-| **DNS**   | UDP      | **53**   | Converting website names to IP addresses |
-| **MySQL** | TCP      | **3306** | Database connections                     |
-| **RDP**   | TCP      | **3389** | Remote Desktop (Windows)                 |
-| **NTP**   | UDP      | **123**  | Time synchronization                     |
-| **POP3**  | TCP      | **110**  | Receiving emails (older method)          |
+| Service                          | Protocol | Default Port | Purpose                  |
+| -------------------------------- | -------- | ------------ | ------------------------ |
+| **SSH**                          | TCP      | **22**       | Secure remote login      |
+| **HTTP**                         | TCP      | **80**       | Web traffic (non-secure) |
+| **HTTPS**                        | TCP      | **443**      | Secure web traffic       |
+| **FTP**                          | TCP      | **21**       | File Transfer            |
+| **SMTP**                         | TCP      | **25**       | Sending email            |
+| **DNS**                          | UDP      | **53**       | Domain name lookup       |
+| **MySQL**                        | TCP      | **3306**     | Database access          |
+| **RDP (Windows Remote Desktop)** | TCP      | **3389**     | Remote desktop access    |
+
+🔹 6. Custom (Non-Default) Ports
+For extra security, system administrators often change the default port number.
+
+For example:
+Instead of using port 22, they might use 2222 or 5000 for SSH.
+To connect then:
+ssh -p 2222 user@192.168.1.10
+(-p means port)
+This makes it harder for attackers to find your SSH service.
+
+🔹 4. How to Check Open Ports (Linux)
+There are several useful commands for checking open ports.
+
+🧩 A. netstat (older but still common)
+sudo netstat -tuln
+Options explained:
+t → TCP
+u → UDP
+l → Listening sockets
+n → Show numeric ports (not service names)
+
+Output Example:
+Proto  Local Address   Port   Service
+tcp    0.0.0.0:22      22     sshd
+tcp    0.0.0.0:80      80     httpd
+tcp    0.0.0.0:443     443    https
+
+or
+B. ss (modern replacement for netstat)
+sudo ss -tuln
+
+
+Output Example:
+Proto  Local Address   Port   Service
+tcp    0.0.0.0:22      22     sshd
+tcp    0.0.0.0:80      80     httpd
+tcp    0.0.0.0:443     443    https
+Same output, faster and more modern.
+
+👉 Here:
+Port 22 (SSH) and 80 (HTTP) are open and listening.
+
+C.nc (netcat — quick manual test)
+Check if a remote host port is reachable:
+nc -zv <ip-address> <port>
+Example:
+nc -zv 10.0.0.10 22
+
+Output:
+Connection to 10.0.0.10 22 port [tcp/ssh] succeeded!
+This means SSH port is open.
+
+You can also test port ranges:
+nc -zv 10.0.0.10 20-80
+
+
+🌐 When Your Web App Is Not Reachable — Simple Steps
+Let’s say you deployed your web app (for example, running on port 8080) on a Linux server or EC2.
+You open the browser and see:
+❌ “This site can’t be reached”
+Here’s what you should do step by step 👇
+
+🔹 Step 1: Check if your app is running
+Run this command:
+sudo ss -tuln | grep 8080
+
+If you see something like:
+tcp  LISTEN  0  128  0.0.0.0:8080  ...
+
+✅ It means your app is running and listening on port 8080.
+If no result appears, your app is not running — restart it.
+
+🔹 Step 2: Check if it works inside the server
+Try accessing it locally on the server:
+curl http://localhost:8080
+
+If it shows a response (like HTML or “Hello World”) → your app is fine.
+If it says “Connection refused” → your app is not running properly or is on the wrong port.
+
+🔹 Step 3: Make sure your app listens on all network interfaces
+In your app code or settings, make sure it listens on 0.0.0.0, not just 127.0.0.1.
+| App Type           | Example Setting                                    |
+| ------------------ | -------------------------------------------------- |
+| Flask (Python)     | `app.run(host='0.0.0.0', port=8080)`               |
+| Node.js            | `app.listen(8080, '0.0.0.0')`                      |
+| Spring Boot (Java) | `server.address=0.0.0.0` in application.properties |
+If your app is bound only to 127.0.0.1, it will only work inside the server — not from your browser.
+
+🔹 Step 4: Check your cloud server’s firewall (for example AWS EC2)
+Go to:
+AWS Console → EC2 → Security Groups → Inbound Rules
+Make sure you have a rule like this:
+| Type       | Protocol | Port Range | Source    |
+| ---------- | -------- | ---------- | --------- |
+| Custom TCP | TCP      | 8080       | 0.0.0.0/0 |
+✅ This allows people (including you) to reach your app on port 8080.
+
+🔹 Step 5: Try again from your computer
+In your browser or terminal:
+
+http://<your-ec2-public-ip>:8080
+If it opens, 🎉 you’re done!
+
+If it still doesn’t open:
+Double-check port number (maybe your app runs on 3000 or 5000)
+Recheck AWS inbound rules
+Restart your app
+
+🔹 Step 6: Optional – Restart SSH (if you changed network settings)
+Sometimes after changes, SSH or network needs a quick restart:
+sudo systemctl restart ssh
+
+🔹 step:7. Kubernetes-Specific Check
+If the app is inside Kubernetes:
+Check if Pod exposes the port:
+kubectl describe pod <pod-name> | grep Port
+
+Check Service type and port mapping:
+kubectl get svc
+
+Example:
+NAME     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)
+webapp   NodePort    10.0.0.42      <none>        8080:30080/TCP
+
+
+Access via:
+http://<node-ip>:30080
+
 
