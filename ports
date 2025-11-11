@@ -174,8 +174,9 @@ Example:
 NAME     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)
 webapp   NodePort    10.0.0.42      <none>        8080:30080/TCP
 
-
 Access via:
 http://<node-ip>:30080
+
+Check if the correct targetPort and port are exposed.
 
 
