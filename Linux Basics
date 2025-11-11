@@ -40,3 +40,195 @@ root@server:/#      → You are in root (administrator) mode
 | `cd /`        | Go to root directory   |             |
 | `cd /home`    | Go to home directory   |             |
 | `pwd`         | Show current directory |             |
+
+Switch to root user:
+sudo su -
+(- loads root’s environment and moves you to /root)
+
+📁 4. Important Linux Directories (under /)
+| Directory | Description                            | Example                               |
+| --------- | -------------------------------------- | ------------------------------------- |
+| `/`       | Root directory (top-level)             | Everything starts from `/`            |
+| `/bin`    | Basic user commands (binaries)         | `ls`, `cat`, `cp`                     |
+| `/sbin`   | System binaries for admin tasks        | `useradd`, `reboot`                   |
+| `/lib`    | Libraries required by binaries         | `.so` shared files                    |
+| `/boot`   | Files required for booting             | Kernel, bootloader                    |
+| `/srv`    | Server-specific data                   | Web server configs                    |
+| `/opt`    | Optional / third-party software        | Manual installs                       |
+| `/mnt`    | Temporarily mounted filesystems        | For mounting extra storage            |
+| `/var`    | Variable data: logs, caches, spools    | `/var/log/messages`                   |
+| `/home`   | User home directories                  | `/home/manvi`                         |
+| `/root`   | Root user’s home directory             | `/root`                               |
+| `/etc`    | System configuration files             | `/etc/passwd`, `/etc/ssh/sshd_config` |
+| `/data`   | (Optional) Custom mount point for data | Mounted drives                        |
+
+Shortcut Directories:
+/bin → /usr/bin
+/sbin → /usr/sbin
+/lib → /usr/lib
+
+🧩 5. Basic Commands
+| Command                     | Description                    |
+| --------------------------- | ------------------------------ |
+| `pwd`                       | Show present working directory |
+| `cd /path`                  | Change directory               |
+| `mkdir dir`                 | Create directory               |
+| `rmdir dir` or `rm -rf dir` | Delete directory               |
+| `touch file`                | Create empty file              |
+| `rm file`                   | Delete file                    |
+| `cp src dest`               | Copy file                      |
+| `cp -r dir1 dir2`           | Copy directory recursively     |
+| `mv old new`                | Move or rename file/folder     |
+
+🧾 6. File Viewing and Editing
+| Command                   | Description                         |
+| ------------------------- | ----------------------------------- |
+| `cat file.txt`            | View full file                      |
+| `less file.txt`           | View file page by page (scrollable) |
+| `more file.txt`           | Similar to less but less flexible   |
+| `head -10 file.txt`       | First 10 lines                      |
+| `tail -20 file.txt`       | Last 20 lines                       |
+| `vim file.txt`            | Edit using Vim                      |
+| `nano file.txt`           | Simple text editor                  |
+| `echo "Hello" > file.txt` | Write text (overwrite)              |
+| `echo "Hi" >> file.txt`   | Append text                         |
+
+👥 7. User and Group Management
+Add user (non-interactive, scripting):
+useradd manvi
+→ does not create /home/manvi automatically.
+
+Add user (interactive):
+adduser manvi
+→ creates /home/manvi and asks for password.
+
+Check users:
+cat /etc/passwd
+
+Set password:
+passwd manvi
+
+Encrypted passwords: stored in /etc/shadow
+→ Encrypted with SHA-512, cannot be decrypted.
+
+Create group:
+groupadd dev
+
+Add user to group:
+usermod -aG dev manvi
+
+🔐 8. File Permissions
+Each file has three sets of permissions:
+-rw-rw-r--
+
+Symbol	Meaning
+-	Regular file (if d → directory)
+rw-	Owner (user) permissions
+rw-	Group permissions
+r--	Others’ permissions
+Symbol	Permission	Description
+r	Read	View file contents
+w	Write	Modify file
+x	Execute	Run as program/script
+
+Change permissions:
+chmod u=rwx file     # Full access for user
+chmod g=rx file      # Read/execute for group
+chmod o=r file       # Read-only for others
+chmod u+x file       # Add execute to user
+chmod g-w file       # Remove write from group
+
+Change ownership:
+chown user:group file
+chown qa:qa test.sh
+
+
+Default Permissions:
+Folder: 755 → rwxr-xr-x
+File: 644 → rw-r--r--
+You need execute permission on a folder to enter it and read permission on files inside it.
+
+⚙️ 9. Process Management
+Process = a running program instance
+Examples:
+Running python app.py
+Running a shell script
+View processes:
+ps -ef          # List all processes (basic)
+ps aux          # Detailed (includes CPU, memory)
+ps aux | nl     # Number the lines
+ps aux | wc -l  # Count number of processes
+
+Difference:
+ps -ef → PID, PPID, CMD (no CPU/mem)
+ps aux → includes CPU and memory columns
+
+Kill/Stop/Resume:
+ps aux | grep java | grep -v grep
+kill PID          # Kill process
+kill -9 PID       # Force kill
+kill -STOP PID    # Pause process
+kill -CONT PID    # Resume process
+
+Change priority:
+renice -n 10 -p PID   # Lower priority
+renice -n -5 -p PID   # Higher priority (root only)
+
+⚙️ 10. Services and Daemons
+Daemon = background process that runs automatically.
+Examples: sshd, crond, nginx
+
+Service management:
+systemctl list-units --type=service   # List services
+systemctl start nginx                 # Start service
+systemctl stop nginx                  # Stop service
+systemctl enable nginx                # Start automatically on boot
+
+📊 11. Monitoring System
+| Command    | Purpose                       |
+| ---------- | ----------------------------- |
+| `top`      | Real-time CPU, memory usage   |
+| `htop`     | Same as top, better visual UI |
+| `free -m`  | Memory usage in MB            |
+| `free -h`  | Human readable                |
+| `vmstat`   | System performance summary    |
+| `nproc`    | Number of CPU cores           |
+| `df -h`    | Disk usage for all mounts     |
+| `du -sh`   | Disk usage of current folder  |
+| `du -sh *` | Disk usage of all subfolders  |
+
+Prometheus + Grafana
+Prometheus: collects metrics from Linux (via Node Exporter)
+Grafana: visualizes data with dashboards
+Alerting: Email/slack alerts when usage crosses limits
+
+💾 12. Disk Management
+When storage fills up:
+Add new volume (EBS)
+Format → Mount → Use
+
+Steps:
+List disks:
+lsblk
+Format volume:
+mkfs.ext4 /dev/xvdf
+Create mount directory:
+mkdir -p /mnt/demo-volume
+Mount the disk:
+mount /dev/xvdf /mnt/demo-volume
+Verify:
+df -h
+Unmount (if needed):
+umount /mnt/demo-volume
+
+Differences:
+| Command   | Use                                         |
+| --------- | ------------------------------------------- |
+| `useradd` | Non-interactive user creation (for scripts) |
+| `adduser` | Interactive user creation                   |
+| `ps aux`  | Detailed process list (with CPU/Mem)        |
+| `ps -ef`  | Simpler process list                        |
+| `kill -9` | Force kill                                  |
+| `renice`  | Change process priority                     |
+| `df -h`   | Disk usage (mounted drives)                 |
+| `du -sh`  | Disk usage (specific folder)                |
