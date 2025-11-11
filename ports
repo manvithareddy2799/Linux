@@ -1,0 +1,54 @@
+ports:
+🔹 1. What is a Port?
+In computer networking, a port is a logical communication endpoint that helps identify specific processes or services on a device.
+
+When two systems communicate over a network:
+The IP address identifies which system to reach.
+The port number identifies which service or process on that system to communicate with.
+
+🏠 Simple Analogy
+Imagine your computer as a big apartment building:
+The IP address is the building’s address.
+The ports are different doors to various rooms in that building.
+Each door (port) leads to a different service:
+Door 22 → SSH room
+Door 80 → Web browsing room
+Door 25 → Email room
+So when someone wants to reach your computer for a specific service, they must know which door (port) to use.
+
+🔹 2. How Ports Work
+When two computers talk over a network:
+They connect using IP address (to find each other).
+They use a port number (to know which service or program to talk to).
+
+For example:
+ssh user@192.168.1.10
+Here:
+192.168.1.10 → IP address (which computer to contact)
+Port 22 (default for SSH) → which service to use on that computer
+So, SSH uses port 22 by default.
+
+🔹 3. Port Number Range
+Every computer has 65,536 ports — numbered from 0 to 65535.
+They’re divided into 3 categories:
+| Range             | Name                        | Used For                                           |
+| ----------------- | --------------------------- | -------------------------------------------------- |
+| **0 – 1023**      | **Well-known ports**        | Common services (used by system programs)          |
+| **1024 – 49151**  | **Registered ports**        | Used by software and applications                  |
+| **49152 – 65535** | **Dynamic / Private ports** | Temporary ports used by clients during connections |
+
+
+🔹 4. Common Port Numbers You Should Know
+| Service   | Protocol | Port     | Description                              |
+| --------- | -------- | -------- | ---------------------------------------- |
+| **SSH**   | TCP      | **22**   | Secure remote login to Linux servers     |
+| **FTP**   | TCP      | **21**   | File Transfer Protocol                   |
+| **HTTP**  | TCP      | **80**   | Normal web browsing (insecure)           |
+| **HTTPS** | TCP      | **443**  | Secure web browsing                      |
+| **SMTP**  | TCP      | **25**   | Sending emails                           |
+| **DNS**   | UDP      | **53**   | Converting website names to IP addresses |
+| **MySQL** | TCP      | **3306** | Database connections                     |
+| **RDP**   | TCP      | **3389** | Remote Desktop (Windows)                 |
+| **NTP**   | UDP      | **123**  | Time synchronization                     |
+| **POP3**  | TCP      | **110**  | Receiving emails (older method)          |
+
