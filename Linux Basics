@@ -255,3 +255,6 @@ Differences:
 | `renice`  | Change process priority                     |
 | `df -h`   | Disk usage (mounted drives)                 |
 | `du -sh`  | Disk usage (specific folder)                |
+
+Networking:
+please refer aws repo ->vpc (VPC Sizing)
