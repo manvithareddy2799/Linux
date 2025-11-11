@@ -174,6 +174,29 @@ Change priority:
 renice -n 10 -p PID   # Lower priority
 renice -n -5 -p PID   # Higher priority (root only)
 
+🖥️ SSH (Secure Shell) — Simple Explanation
+🔹 What is SSH?
+SSH is a secure way to connect to another computer (like a Linux server) from your own system.
+It lets you control the remote system using commands — safely and privately.
+
+🔹 How it Works
+On the server, a process called sshd keeps running.
+→ It waits for people to connect.
+On your computer, you use the SSH client (the ssh command) to connect.
+🔹 Example (From Windows using Git Bash)
+ssh user@ip_address
+
+
+For example:
+ssh ubuntu@192.168.1.10
+Then you enter the password for that user.
+Once connected, you’ll be inside the server’s terminal and can run commands there.
+
+🔹 Restart SSH Service (on server)
+If SSH is not working or after changing settings:
+sudo systemctl restart ssh
+
+
 ⚙️ 10. Services and Daemons
 Daemon = background process that runs automatically.
 Examples: sshd, crond, nginx
