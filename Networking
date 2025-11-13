@@ -1,0 +1,39 @@
+🌐 What is OSI Model?
+It’s a model with 7 layers that explains how data travels from one computer to another through a network.
+Think of it like a 7-step process that data follows to go from your computer to your friend’s.
+
+🧱 7 Layers (Simple Explanation)
+
+
+| Layer | Name             | What it Does                                                                    | Example                                         |
+| ----- | ---------------- | ------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **7** | **Application**  | The apps you use to send or receive data                                        | WhatsApp, Gmail, Chrome                         |
+| **6** | **Presentation** | Converts data into a format both sides understand (also encrypts or compresses) | Encryption (SSL), file formats like JPEG or MP3 |
+| **5** | **Session**      | Starts and ends the communication between two devices                           | Login session, video call connection            |
+| **4** | **Transport**    | Breaks data into small pieces and makes sure it reaches safely                  | TCP and UDP                                     |
+| **3** | **Network**      | Decides the best path for data to travel                                        | IP address, routers                             |
+| **2** | **Data Link**    | Moves data between devices on the same network                                  | MAC address, switches                           |
+| **1** | **Physical**     | Sends the actual data through wires or signals                                  | Cables, Wi-Fi, network card                     |
+
+
+💬 Example (Sending a WhatsApp Message)
+Application: You type “Hi” in WhatsApp.
+Presentation: WhatsApp encrypts your message.
+Session: It creates a connection with your friend’s phone.
+Transport: Breaks the message into small parts (packets).
+Network: Adds IP addresses to send it to the right place.
+Data Link: Sends the packet to your Wi-Fi or mobile network.
+Physical: Message goes as electrical signals or radio waves.
+
+Summary:
+| Layer | Keyword      | Function                            |
+| ----- | ------------ | ----------------------------------- |
+| 7     | Application  | User interaction                    |
+| 6     | Presentation | Data translation/encryption         |
+| 5     | Session      | Connection management               |
+| 4     | Transport    | Reliable data delivery              |
+| 3     | Network      | Path determination (routing)        |
+| 2     | Data Link    | Frame transfer & MAC addressing     |
+| 1     | Physical     | Transmission through cables/signals |
+
+
